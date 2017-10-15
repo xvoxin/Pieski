@@ -1,4 +1,4 @@
-package com.example.xvoxin.pieski;
+package com.example.xvoxin.pieski.Connection;
 
 /**
  * Created by xvoxin on 07.10.2017.

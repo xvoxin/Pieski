@@ -1,9 +1,10 @@
-package com.example.xvoxin.pieski;
+package com.example.xvoxin.pieski.Connection;
 
+import android.app.Activity;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,17 +14,18 @@ import java.util.Date;
  */
 public class AddLocationToDb extends AsyncTask<String, String, String>{
 
-    private String message = "";
+    private Activity activity;
+    private ConnectionClass connectionClass;
+    private Toast alert;
 
-    ConnectionClass connectionClass;
-
-    public String getMessage(){
-        return message;
+    public AddLocationToDb(Activity activity) {
+        this.activity = activity;
     }
 
     @Override
     protected void onPostExecute(String result){
-        message = result;
+        alert = Toast.makeText(activity.getApplicationContext(), result, Toast.LENGTH_SHORT);
+        alert.show();
     }
 
     @Override
@@ -44,14 +46,17 @@ public class AddLocationToDb extends AsyncTask<String, String, String>{
                 SimpleDateFormat ft = new SimpleDateFormat (" yyyy.MM.dd HH:mm:ss");
 
                 System.out.println("Current Date: " + ft.format(dNow));
-                String query = "insert into pieski(latitude, longitude, city, czas) values('"+ latitude + "', '" + longitude +"', '"+ city +"', '"+ String.valueOf(ft.format(dNow)) +"'); ";
+                String query = "insert into pieski(latitude, longitude, city, time) values('"+ latitude + "', '" + longitude +"', '"+ city +"', '"+ String.valueOf(ft.format(dNow)) +"'); ";
                 Statement stmt = con.createStatement();
-                ResultSet rs = stmt.executeQuery(query);
+                System.out.println("here?");
+                stmt.executeUpdate(query);
+                System.out.println("or here?");
                 res = "OK";
             }
         }
         catch (Exception ex)
         {
+            ex.printStackTrace();
             res = "Exceptions";
         }
 
