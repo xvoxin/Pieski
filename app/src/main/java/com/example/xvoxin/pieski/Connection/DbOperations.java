@@ -1,7 +1,6 @@
 package com.example.xvoxin.pieski.Connection;
 
 import com.example.xvoxin.pieski.Models.Markers;
-import com.example.xvoxin.pieski.Models.User;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -33,8 +32,9 @@ public class DbOperations {
                     String longitude = rs.getString("longitude");
                     String city = rs.getString("city");
                     String time = rs.getString("time");
+                    int userId = rs.getInt("userId");
 
-                    markers.add(new Markers(latitude, longitude, city, time));
+                    markers.add(new Markers(latitude, longitude, city, time, userId));
                 }
             }
         }

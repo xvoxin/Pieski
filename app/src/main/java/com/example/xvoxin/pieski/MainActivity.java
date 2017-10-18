@@ -26,7 +26,6 @@ import com.example.xvoxin.pieski.Connection.AddLocationToDb;
 import com.example.xvoxin.pieski.Models.Markers;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

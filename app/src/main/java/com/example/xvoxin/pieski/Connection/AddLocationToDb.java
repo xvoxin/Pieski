@@ -6,8 +6,6 @@ import android.widget.Toast;
 
 import java.sql.Connection;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * Created by xvoxin on 07.10.2017.

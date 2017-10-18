@@ -9,12 +9,14 @@ public class Markers {
     private String longitude;
     private String city;
     private String time;
+    private int userId;
 
-    public Markers(String latitude, String longitude, String city, String time){
+    public Markers(String latitude, String longitude, String city, String time, int userId){
         this.latitude = latitude;
         this.longitude = longitude;
         this.city = city;
         this.time = time;
+        this.userId = userId;
     }
 
     public String getLatitude() {
@@ -31,5 +33,9 @@ public class Markers {
 
     public String getTime() {
         return time;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 }
