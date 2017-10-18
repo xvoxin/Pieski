@@ -39,7 +39,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Toast alert;
     private ArrayList<Markers> markers;
 
-    String[] location = new String[4];
+    String[] location = new String[5];
 
     SharedPreferences sharedPref;
 
@@ -76,11 +76,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
             location = pullLocation();
 
-            textView.setText("You are here!\n" + location[0] + ", " + location[1] + "\nIn city - " + location[2]);
+            //textView.setText("You are here!\n" + location[0] + ", " + location[1] + "\nIn city - " + location[2]);
 
             Date dNow = new Date( );
             SimpleDateFormat ft = new SimpleDateFormat (" yyyy.MM.dd HH:mm:ss");
             location[3] = String.valueOf(ft.format(dNow));
+            location[4] = String.valueOf(sharedPref.getInt("id", 0));
 
             AddLocationToDb addLocationToDb = new AddLocationToDb(this);
             addLocationToDb.execute(location);
@@ -110,7 +111,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private String[] pullLocation() {
 
-        String[] locationArray = new String[3];
+        String[] locationArray = new String[5];
         double latitude = 0;
         double longitude = 0;
         String city = "";

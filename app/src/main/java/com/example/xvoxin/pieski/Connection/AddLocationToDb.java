@@ -32,6 +32,7 @@ public class AddLocationToDb extends AsyncTask<String, String, String>{
         String longitude = param[1];
         String city = param[2];
         String time = param[3];
+        int userId = Integer.parseInt(param[4]);
         String res = "";
 
         connectionClass = new ConnectionClass();
@@ -41,12 +42,10 @@ public class AddLocationToDb extends AsyncTask<String, String, String>{
             if (con == null) {
                 res = "Error in connection with SQL server";
             } else {
-                String query = "insert into pieski(latitude, longitude, city, time) values('"+ latitude + "', '" + longitude +"', '"+ city +"', '"+ time +"'); ";
+                String query = "insert into pieski(latitude, longitude, city, time, userId) values('"+ latitude + "', '" + longitude +"', '"+ city +"', '"+ time +"', '" + userId +"'); ";
                 Statement stmt = con.createStatement();
-                System.out.println("here?");
                 stmt.executeUpdate(query);
-                System.out.println("or here?");
-                res = "OK";
+                res = "WIDZIAŁEM!";
             }
         }
         catch (Exception ex)

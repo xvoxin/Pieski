@@ -47,8 +47,15 @@
         </activity>
 
         <activity
+            android:name=".RegisterActivity"
+            android:label="Register"
+            android:parentActivityName=".LoginActivity" >
+        </activity>
+
+        <activity
             android:name=".MainActivity"
-            android:label="Pieski">
+            android:label="Pieski"
+            android:parentActivityName=".LoginActivity" >
         </activity>
     </application>
 

@@ -2,6 +2,7 @@ package com.example.xvoxin.pieski.Connection;
 
 import com.example.xvoxin.pieski.Models.Markers;
 
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -72,5 +73,49 @@ public class DbOperations {
         }
 
         return 0;
+    }
+
+    public int register(String login, String password){
+        int id = 0;
+
+        connectionClass = new ConnectionClass();
+
+        try {
+            Connection con = connectionClass.CONN();
+            if (con == null) {
+                System.out.println("wrong");
+            } else {
+
+                String query = "insert into users (login, password) values ('" + login +"', '"+ password +"')";
+                Statement stmt = con.createStatement();
+                stmt.executeUpdate(query);
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+            return 0;
+        }
+
+        return 0;
+    }
+
+    public String protectedPassword(String passwordToHash){
+
+        String generatedPassword = "";
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(passwordToHash.getBytes());
+            byte[] bytes = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for(int i=0; i< bytes.length; i++){
+                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            }
+            generatedPassword = sb.toString();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return generatedPassword;
     }
 }

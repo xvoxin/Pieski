@@ -7,17 +7,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.EditText;
 
 import com.example.xvoxin.pieski.Connection.DbOperations;
 
+
 /**
  * Created by xvoxin on 15.10.2017.
  */
-public class LoginActivity extends Activity implements View.OnClickListener{
+public class LoginActivity extends Activity {
 
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
@@ -36,14 +36,6 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             Intent main = new Intent(this, MainActivity.class);
             startActivity(main);
         }
-
-
-
-    }
-
-    @Override
-    public void onClick(View v) {
-
     }
 
     public void doLogin(View v){
@@ -56,7 +48,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         String loginStr = login.getText().toString();
         String passwordStr = password.getText().toString();
 
-        int id = db.login(loginStr, passwordStr);
+        int id = db.login(loginStr, db.protectedPassword(passwordStr));
 
         if (id != 0) {
             editor.putInt("id", id);
@@ -78,7 +70,8 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     }
 
     public void doRegister(View v){
-        Log.v("REJESTRUJE?", "NO CHYBA TAK");
+        Intent register = new Intent(this, RegisterActivity.class);
+        startActivity(register);
     }
 
     @Override
@@ -93,4 +86,5 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             finish();
         }
     }
+
 }
