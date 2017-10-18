@@ -1,18 +1,30 @@
 package com.example.xvoxin.pieski;
 
-import android.support.v4.app.FragmentActivity;
+import android.*;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
 
+import com.example.xvoxin.pieski.Connection.DbOperations;
+import com.example.xvoxin.pieski.Models.Markers;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
+    private ArrayList<Markers> markers;
+    private DbOperations readMarks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,25 +34,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        markers = new ArrayList<Markers>();
     }
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        markers = new ArrayList<Markers>();
+        readMarks = new DbOperations();
+        markers = (ArrayList<Markers>)readMarks.getMarkers().clone();
+
+
+        LatLng pszczolki = new LatLng(54.175057, 18.702465);
+        mMap.addMarker(new MarkerOptions().position(pszczolki).title("Tutaj na pewno był goldenek!"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(pszczolki));
+
+        for(int i = 0; i < markers.size(); i++){
+            System.out.println(markers.get(i).getCity() + " - " + markers.get(i).getTime());
+
+            LatLng marker = new LatLng(Double.parseDouble(markers.get(i).getLatitude()), Double.parseDouble(markers.get(i).getLongitude()));
+            mMap.addMarker(new MarkerOptions().position(marker).title(markers.get(i).getCity() + " - " + markers.get(i).getTime()));
+        }
+
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location myLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+
+        LatLng coordinate = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
+        CameraUpdate yourLocation = CameraUpdateFactory.newLatLngZoom(coordinate, 15);
+        mMap.animateCamera(yourLocation);
     }
 }

@@ -4,6 +4,8 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -17,23 +19,30 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.xvoxin.pieski.Connection.AddLocationToDb;
+import com.example.xvoxin.pieski.Models.Markers;
+
 import java.io.IOException;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-
     private Button btnGetLocation;
     private TextView textView;
-    private ProgressBar pb;
     private Toast alert;
+    private ArrayList<Markers> markers;
 
-    String[] location = new String[3];
+    String[] location = new String[4];
+
+    SharedPreferences sharedPref;
 
     private static final String TAG = "CHECKING WHATS GOING ON";
     private boolean flag = false;
@@ -47,15 +56,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        pb = (ProgressBar) findViewById(R.id.progressBar);
-        pb.setVisibility(View.INVISIBLE);
+        sharedPref = getSharedPreferences("IDvalue", 0);
 
         textView = (TextView) findViewById(R.id.textView);
-        textView.setText("No, gdzie jesteś cwaniaczku?");
+        String setText = "Hej " + sharedPref.getString("login", "") + "!";
+        textView.setText(setText);
 
         btnGetLocation = (Button) findViewById(R.id.button);
         btnGetLocation.setOnClickListener(this);
-
 
     }
 
@@ -63,40 +71,44 @@ public class MainActivity extends Activity implements View.OnClickListener {
     public void onClick(View v) {
 
         String statusDB;
-        flag = displayGpsStatus();
+        flag = displayNetworkStatus();
         if (flag == true) {
             Log.v(TAG, "onClick");
 
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    location = pullLocation();
-                    textView.setText("You are here!\n"+location[0]+", "+location[1]+"\nIn city - "+ location[2]);
-                }
-            });
+            location = pullLocation();
 
-            AddLocationToDb addLocationToDb = new AddLocationToDb();
+            textView.setText("You are here!\n" + location[0] + ", " + location[1] + "\nIn city - " + location[2]);
+
+            Date dNow = new Date( );
+            SimpleDateFormat ft = new SimpleDateFormat (" yyyy.MM.dd HH:mm:ss");
+            location[3] = String.valueOf(ft.format(dNow));
+
+            AddLocationToDb addLocationToDb = new AddLocationToDb(this);
             addLocationToDb.execute(location);
-            statusDB = addLocationToDb.getMessage();
-            alert = Toast.makeText(getApplicationContext(), statusDB, Toast.LENGTH_SHORT);
-            alert.show();
 
         } else {
-            alert = Toast.makeText(getApplicationContext(), "Gps is off", Toast.LENGTH_SHORT);
+            alert = Toast.makeText(getApplicationContext(), "Network is off", Toast.LENGTH_SHORT);
             alert.show();
         }
 
     }
 
-    private boolean displayGpsStatus() {
+    public void goToMaps(View v){
+        Intent maps = new Intent(this, MapsActivity.class);
+        startActivity(maps);
+    }
+
+    private boolean displayNetworkStatus() {
         ContentResolver contentResolver = getBaseContext().getContentResolver();
-        boolean gpsStatus = Settings.Secure.isLocationProviderEnabled(contentResolver, LocationManager.GPS_PROVIDER);
-        if (gpsStatus) {
+        boolean networkStatus = Settings.Secure.isLocationProviderEnabled(contentResolver, LocationManager.NETWORK_PROVIDER);
+        if (networkStatus) {
             return true;
 
         } else {
             return false;
         }
     }
+
     private String[] pullLocation() {
 
         String[] locationArray = new String[3];
@@ -106,24 +118,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        List<String> providers = locationManager.getProviders(true);
-        for (String provider : providers) {
-
-            locationManager.requestLocationUpdates(provider, 1000, 10, new MyLocationListener());
-
-            Location myLocation = locationManager.getLastKnownLocation(provider);
-
-            if (myLocation != null) {
-                latitude = myLocation.getLatitude();
-                longitude = myLocation.getLongitude();
-            }
-        }
-
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10, new MyLocationListener());
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null;
         }
 
-        Geocoder gcd = new Geocoder(getBaseContext(), Locale.getDefault());
+        Location myLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+        if (myLocation != null) {
+            latitude = myLocation.getLatitude();
+            longitude = myLocation.getLongitude();
+        }
+
+        Geocoder gcd = new Geocoder(this, Locale.getDefault());
         List<Address> addresses;
         try {
             addresses = gcd.getFromLocation(latitude, longitude, 1);
@@ -137,9 +144,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
         locationArray[1] = String.valueOf(longitude);
         locationArray[2] = city;
 
-
-//        return "You are here!"+latitude+", "+longitude+"\nIn city - "+ city;
         return  locationArray;
+    }
+
+    public void doLogout(View view) {
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putInt("id", 0);
+        editor.putString("login", "");
+        editor.putString("password", "");
+        editor.commit();
+
+        Log.v("szared - ", sharedPref.getString("login", ""));
+        onBackPressed();
     }
 }
 

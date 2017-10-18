@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Pieski</string>
+    <string name="title_activity_maps">Map</string>
 </resources>
