@@ -24,8 +24,6 @@ import java.util.ArrayList;
 public class MapsActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private GoogleMap mMap;
-    private ArrayList<Markers> markers;
-    private DbOperations readMarks;
     private SharedPreferences sp;
 
     @Override
@@ -42,22 +40,20 @@ public class MapsActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        int userId = 0;
+        int userId;
 
-        markers = new ArrayList<Markers>();
-        readMarks = new DbOperations();
-        markers = (ArrayList<Markers>)readMarks.getMarkers().clone();
+        ArrayList<Markers> markers = new ArrayList<Markers>((ArrayList<Markers>) getIntent().getSerializableExtra("markers"));
         sp = getSharedPreferences("IDvalue", 0);
 
         userId = sp.getInt("id", 0);
 
+
+
         LatLng pszczolki = new LatLng(54.175057, 18.702465);
         mMap.addMarker(new MarkerOptions().position(pszczolki).title("Tutaj na pewno był goldenek!"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(pszczolki));
 
         for(int i = 0; i < markers.size(); i++){
             if(userId == markers.get(i).getUserId()) {
-                System.out.println(markers.get(i).getCity() + " - " + markers.get(i).getTime());
 
                 LatLng marker = new LatLng(Double.parseDouble(markers.get(i).getLatitude()), Double.parseDouble(markers.get(i).getLongitude()));
                 mMap.addMarker(new MarkerOptions().position(marker).title(markers.get(i).getCity() + " - " + markers.get(i).getTime()));

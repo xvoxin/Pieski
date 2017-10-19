@@ -12,12 +12,16 @@ import android.view.Window;
 import android.widget.EditText;
 
 import com.example.xvoxin.pieski.Connection.DbOperations;
+import com.example.xvoxin.pieski.Connection.DbOperationsInterface;
+import com.example.xvoxin.pieski.Models.Markers;
+
+import java.util.ArrayList;
 
 
 /**
  * Created by xvoxin on 15.10.2017.
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements DbOperationsInterface{
 
     SharedPreferences sharedPref;
     SharedPreferences.Editor editor;
@@ -38,9 +42,14 @@ public class LoginActivity extends Activity {
         }
     }
 
-    public void doLogin(View v){
+    @Override
+    public void login(int id) {
+        continueLogin(id);
+    }
 
-        DbOperations db = new DbOperations();
+    public void doLogin(View v) {
+
+        DbOperations db = new DbOperations(this);
 
         EditText login = (EditText) findViewById(R.id.loginText);
         EditText password = (EditText) findViewById(R.id.passwordText);
@@ -48,17 +57,26 @@ public class LoginActivity extends Activity {
         String loginStr = login.getText().toString();
         String passwordStr = password.getText().toString();
 
-        int id = db.login(loginStr, db.protectedPassword(passwordStr));
+        editor.putString("login", loginStr);
+        editor.commit();
 
-        if (id != 0) {
+        db.execute("login", loginStr, passwordStr);
+    }
+
+    public void continueLogin(int id){
+        if (id > 0) {
             editor.putInt("id", id);
-            editor.putString("login", loginStr);
             editor.commit();
             Intent main = new Intent(this, MainActivity.class);
             startActivity(main);
         } else {
+            editor.putInt("id", 0);
+            editor.putString("login", "");
+            editor.putString("password", "");
+            editor.commit();
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("Zły login lub hasło")
+            builder.setMessage("Wrong login or password")
                     .setCancelable(false)
                     .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -72,6 +90,7 @@ public class LoginActivity extends Activity {
     public void doRegister(View v){
         Intent register = new Intent(this, RegisterActivity.class);
         startActivity(register);
+        finish();
     }
 
     @Override
@@ -87,4 +106,12 @@ public class LoginActivity extends Activity {
         }
     }
 
+    @Override
+    public void getMarkers(ArrayList<Markers> marks) {
+
+    }
+    @Override
+    public void register(int id) {
+
+    }
 }

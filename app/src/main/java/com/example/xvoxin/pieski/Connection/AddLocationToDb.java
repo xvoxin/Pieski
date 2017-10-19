@@ -45,7 +45,7 @@ public class AddLocationToDb extends AsyncTask<String, String, String>{
                 String query = "insert into pieski(latitude, longitude, city, time, userId) values('"+ latitude + "', '" + longitude +"', '"+ city +"', '"+ time +"', '" + userId +"'); ";
                 Statement stmt = con.createStatement();
                 stmt.executeUpdate(query);
-                res = "WIDZIAŁEM!";
+                res = "I SAW HIM!";
             }
         }
         catch (Exception ex)

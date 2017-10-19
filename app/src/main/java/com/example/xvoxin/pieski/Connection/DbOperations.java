@@ -1,5 +1,7 @@
 package com.example.xvoxin.pieski.Connection;
 
+import android.os.AsyncTask;
+
 import com.example.xvoxin.pieski.Models.Markers;
 
 import java.security.MessageDigest;
@@ -11,13 +13,52 @@ import java.util.ArrayList;
 /**
  * Created by xvoxin on 15.10.2017.
  */
-public class DbOperations {
-    private ConnectionClass connectionClass;
+public class DbOperations extends AsyncTask<String, String, String[]>{
 
-    public ArrayList<Markers> getMarkers() {
-        ArrayList<Markers> markers = new ArrayList<Markers>();
+    private ConnectionClass connectionClass = new ConnectionClass();
+    public DbOperationsInterface dbo;
 
-        connectionClass = new ConnectionClass();
+    public DbOperations(DbOperationsInterface dbo){
+        this.dbo = dbo;
+    }
+
+    private ArrayList<Markers> markers;
+
+    @Override
+    protected void onPostExecute(String... param){
+        if(param[0].equals("login")){
+            dbo.login(Integer.parseInt(param[1]));
+        }
+        else if(param[0].equals("register")) {
+            dbo.register(Integer.parseInt(param[1]));
+        }
+        else if(param[0].equals("markers")){
+            dbo.getMarkers(markers);
+        }
+    }
+
+    @Override
+    protected String[] doInBackground(String... param) {
+        String[] ret = new String[2];
+
+        if(param[0].equals("login")){
+            ret[0] = "login";
+            ret[1] = String.valueOf(login(param[1], param[2]));
+        }
+        else if(param[0].equals("register")){
+            ret[0] = "register";
+            ret[1] = String.valueOf(register(param[1], param[2]));
+        }
+        else if(param[0].equals("markers")){
+            ret[0] = "markers";
+            getMarkers();
+        }
+        return ret;
+    }
+
+    public void getMarkers() {
+
+        markers = new ArrayList<Markers>();
 
         try {
             Connection con = connectionClass.CONN();
@@ -39,17 +80,14 @@ public class DbOperations {
                 }
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex){
             ex.printStackTrace();
         }
-
-        return markers;
     }
 
     public int login(String login, String password){
 
-        connectionClass = new ConnectionClass();
+        password = protectedPassword(password);
 
         try {
             Connection con = connectionClass.CONN();
@@ -66,8 +104,7 @@ public class DbOperations {
                 }
             }
         }
-        catch (Exception ex)
-        {
+        catch (Exception ex){
             ex.printStackTrace();
             return 0;
         }
@@ -76,9 +113,8 @@ public class DbOperations {
     }
 
     public int register(String login, String password){
-        int id = 0;
 
-        connectionClass = new ConnectionClass();
+        password = protectedPassword(password);
 
         try {
             Connection con = connectionClass.CONN();

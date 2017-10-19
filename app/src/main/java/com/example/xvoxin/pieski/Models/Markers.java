@@ -1,9 +1,11 @@
 package com.example.xvoxin.pieski.Models;
 
+import java.io.Serializable;
+
 /**
  * Created by xvoxin on 15.10.2017.
  */
-public class Markers {
+public class Markers implements Serializable{
 
     private String latitude;
     private String longitude;

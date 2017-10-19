@@ -55,6 +55,6 @@
         android:layout_alignParentEnd="true"
         android:clickable="true"
         android:onClick="doLogout"
-        android:text="Wyloguj" />
+        android:text="Sign out" />
 
 </RelativeLayout>

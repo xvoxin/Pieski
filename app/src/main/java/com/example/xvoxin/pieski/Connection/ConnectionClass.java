@@ -19,10 +19,10 @@ public class ConnectionClass {
     String password = "238204";
 
 
-    @SuppressLint("NewApi")
+    //@SuppressLint("NewApi")
     public Connection CONN() {
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
+        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        //StrictMode.setThreadPolicy(policy);
         Connection conn = null;
         String ConnURL = null;
         try {
@@ -32,12 +32,8 @@ public class ConnectionClass {
                     + "databaseName=" + db + ";user=" + un + ";password="
                     + password + ";";
             conn = DriverManager.getConnection(ConnURL);
-        } catch (SQLException se) {
-            Log.e("ERRO", se.getMessage());
-        } catch (ClassNotFoundException e) {
-            Log.e("ERRO", e.getMessage());
-        } catch (Exception e) {
-            Log.e("ERRO", e.getMessage());
+        } catch (Exception e){
+            e.printStackTrace();
         }
         return conn;
     }

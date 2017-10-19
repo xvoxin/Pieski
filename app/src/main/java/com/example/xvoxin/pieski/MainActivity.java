@@ -23,6 +23,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.xvoxin.pieski.Connection.AddLocationToDb;
+import com.example.xvoxin.pieski.Connection.DbOperations;
+import com.example.xvoxin.pieski.Connection.DbOperationsInterface;
 import com.example.xvoxin.pieski.Models.Markers;
 
 import java.io.IOException;
@@ -32,20 +34,19 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class MainActivity extends Activity implements View.OnClickListener {
+public class MainActivity extends Activity implements View.OnClickListener, DbOperationsInterface{
 
     private Button btnGetLocation;
     private TextView textView;
     private Toast alert;
     private ArrayList<Markers> markers;
+    private boolean canMaps = false;
 
     String[] location = new String[5];
 
     SharedPreferences sharedPref;
 
-    private static final String TAG = "CHECKING WHATS GOING ON";
     private boolean flag = false;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,19 +65,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         btnGetLocation = (Button) findViewById(R.id.button);
         btnGetLocation.setOnClickListener(this);
 
+        DbOperations db = new DbOperations(this);
+        db.execute("markers");
+
     }
 
     @Override
     public void onClick(View v) {
 
-        String statusDB;
         flag = displayNetworkStatus();
         if (flag == true) {
-            Log.v(TAG, "onClick");
-
             location = pullLocation();
-
-            //textView.setText("You are here!\n" + location[0] + ", " + location[1] + "\nIn city - " + location[2]);
 
             Date dNow = new Date( );
             SimpleDateFormat ft = new SimpleDateFormat (" yyyy.MM.dd HH:mm:ss");
@@ -93,9 +92,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     }
 
+    @Override
+    public void getMarkers(ArrayList<Markers> marks) {
+        markers = (ArrayList<Markers>) marks.clone();
+        canMaps = true;
+    }
+
     public void goToMaps(View v){
-        Intent maps = new Intent(this, MapsActivity.class);
-        startActivity(maps);
+        if(canMaps) {
+            Intent maps = new Intent(this, MapsActivity.class);
+            maps.putExtra("markers", markers);
+            startActivity(maps);
+        }
+        else {
+            alert = Toast.makeText(getApplicationContext(), "Maps are not ready ", Toast.LENGTH_SHORT);
+            alert.show();
+        }
     }
 
     private boolean displayNetworkStatus() {
@@ -118,7 +130,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10, new MyLocationListener());
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 10, new MyLocationListener());
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null;
         }
@@ -155,8 +167,17 @@ public class MainActivity extends Activity implements View.OnClickListener {
         editor.putString("password", "");
         editor.commit();
 
-        Log.v("szared - ", sharedPref.getString("login", ""));
         onBackPressed();
+    }
+
+    @Override
+    public void login(int id) {
+
+    }
+
+    @Override
+    public void register(int id) {
+
     }
 }
 

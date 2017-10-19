@@ -46,18 +46,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Hasło"
+        android:text="Password"
         android:id="@+id/textView3"
-        android:layout_above="@+id/passwordText"
-        android:layout_alignStart="@+id/textView2"
-        android:layout_marginBottom="20dp" />
+        android:layout_below="@+id/loginText"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
 
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Zaloguj się"
+        android:text="Sign in"
         android:id="@+id/textView4"
         android:layout_marginTop="28dp"
         android:textSize="50dp"
@@ -68,7 +68,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Zaloguj"
+        android:text="Submit"
         android:id="@+id/buttonLogin"
         android:background="#aa5bfe"
         android:textColor="#FFF"
@@ -81,7 +81,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Nie masz konta? Zarejestruj się!"
+        android:text="Don&apos;t have an account? Register!"
         android:id="@+id/registerText"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
