@@ -3,12 +3,8 @@ package com.example.xvoxin.pieski.Connection;
 /**
  * Created by xvoxin on 07.10.2017.
  */
-import android.annotation.SuppressLint;
-import android.os.StrictMode;
-import android.util.Log;
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.SQLException;
 
 
 public class ConnectionClass {
@@ -21,8 +17,6 @@ public class ConnectionClass {
 
     //@SuppressLint("NewApi")
     public Connection CONN() {
-        //StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        //StrictMode.setThreadPolicy(policy);
         Connection conn = null;
         String ConnURL = null;
         try {

@@ -82,6 +82,8 @@ public class MainActivity extends Activity implements View.OnClickListener, DbOp
             location[3] = String.valueOf(ft.format(dNow));
             location[4] = String.valueOf(sharedPref.getInt("id", 0));
 
+            markers.add(new Markers(location[0], location[1], location[2], location[3], sharedPref.getInt("id", 0)));
+
             AddLocationToDb addLocationToDb = new AddLocationToDb(this);
             addLocationToDb.execute(location);
 
@@ -130,7 +132,7 @@ public class MainActivity extends Activity implements View.OnClickListener, DbOp
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 100, 10, new MyLocationListener());
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 10, new MyLocationListener());
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return null;
         }
